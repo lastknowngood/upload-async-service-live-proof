@@ -1,0 +1,59 @@
+contract_version: v1
+
+lifecycle:
+  mode: live
+
+project:
+  name: upload-async-service-live-proof
+  owner: lastknowngood
+  repository_url: https://github.com/lastknowngood/upload-async-service-live-proof
+
+target:
+  platform_class: coolify-single-host-v1
+  host_label: coolify-01
+  environment: production
+
+exposure:
+  mode: public
+  domains:
+    - upload.dental-school.education
+
+coolify:
+  app_type: dockerfile
+  resource_name: upload-async-service-live-proof
+  project_name: live-proof-tests
+
+build:
+  source_type: git
+  source_ref: proof/upload-async-service-live-proof-local-planning
+  runtime_notes: single FastAPI app with embedded DB-polling worker; PostgreSQL is durable source of truth; Hetzner Object Storage stores derived artifacts only.
+
+state:
+  stateful: true
+  data_paths: []
+  storage_class: postgres-primary-plus-derived-object-artifacts
+
+dependencies:
+  database: postgresql
+  cache: none
+  object_storage: s3-compatible-object-storage
+
+secrets:
+  source_of_truth: external-secret-store
+  required_secret_names:
+    - DATABASE_URL
+    - OBJECT_STORAGE_ENDPOINT
+    - OBJECT_STORAGE_BUCKET
+    - OBJECT_STORAGE_ACCESS_KEY_ID
+    - OBJECT_STORAGE_SECRET_ACCESS_KEY
+
+operations:
+  healthcheck: GET /healthz
+  rollback_hint: stay on the same proof ref; if public redeploy fails or commit drifts, remove the A record and clean up, or use a known-good private-green rollback only when Coolify exposes it deterministically.
+  backup_class: stateful-logical-dump
+
+notes:
+  - PostgreSQL is the durable source of truth for uploads and job state.
+  - Object Storage is used only for rematerializable derived JSON artifacts.
+  - Proof-only endpoints must be fenced before any public proof.
+  - Current steady state is local/private planning only; no host resources, DNS, bucket credentials or live proof evidence are active from this contract.
