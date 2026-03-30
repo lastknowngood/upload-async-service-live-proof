@@ -19,9 +19,12 @@ auf `coolify-01`.
 - das Repo ist lokal vorhanden und oeffentlich auf GitHub publiziert:
   - `https://github.com/lastknowngood/upload-async-service-live-proof`
 - der aktuelle Proof-Ref ist publiziert:
-  - `proof/upload-async-service-live-proof-local-planning`
+  - `proof/upload-async-service-live-proof-private-20260330-r1`
 - die Runtime, die projektlokalen Proof-Helfer und der Deploy-Contract fuer den
   Upload-/Async-Fall sind angelegt
+- der aktuelle Contract ist bewusst auf einen privaten Proof-Block ausgerichtet:
+  - `exposure.mode: private`
+  - kein Public-DNS- oder TLS-Claim in diesem Arbeitsstand
 - ein dediziertes Hetzner-Object-Storage-Projekt
   `upload-async-service-live-proof` ist angelegt
 - der dedizierte retained Bucket `schwedler-upload-async-proof` existiert in
@@ -98,6 +101,9 @@ git status --short --ignored
 
 - lokaler Code- und Testpfad ist vorhanden
 - oeffentliches GitHub-Repo und Proof-Ref sind vorhanden
+- der aktuelle Projekt-Contract ist bewusst auf einen privaten Host-Block
+  eingefroren; ein spaeterer Public-Proof braucht danach einen eigenen
+  Contract-Nachzug
 - dedizierte Object-Storage-Boundary ist vorhanden:
   - Projekt `upload-async-service-live-proof`
   - Bucket `schwedler-upload-async-proof`

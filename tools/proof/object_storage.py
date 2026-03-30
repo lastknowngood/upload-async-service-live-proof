@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+from uuid import uuid4
 
 import boto3
 from botocore.client import Config
@@ -38,7 +39,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'command',
-        choices=['head-bucket', 'list-prefix', 'delete-prefix', 'verify-auth-fails'],
+        choices=[
+            'list-buckets',
+            'head-bucket',
+            'list-prefix',
+            'delete-prefix',
+            'roundtrip-prefix',
+            'verify-auth-fails',
+        ],
     )
     parser.add_argument('--endpoint')
     parser.add_argument('--bucket')
@@ -48,6 +56,13 @@ def main() -> int:
     args = parser.parse_args()
 
     client = build_client(args)
+
+    if args.command == 'list-buckets':
+        response = client.list_buckets()
+        buckets = [item['Name'] for item in response.get('Buckets', [])]
+        print(json.dumps({'buckets': buckets}, indent=2))
+        return 0
+
     bucket = require_bucket(args)
 
     if args.command == 'head-bucket':
@@ -71,6 +86,39 @@ def main() -> int:
             )
         print(json.dumps({'bucket': bucket, 'prefix': args.prefix, 'deleted_count': len(keys)}))
         return 0
+
+    if args.command == 'roundtrip-prefix':
+        probe_key = f"{args.prefix.rstrip('/')}/probe-{uuid4().hex}.json" if args.prefix else (
+            f"probe-{uuid4().hex}.json"
+        )
+        payload = b'{"probe":"ok"}\n'
+        created = False
+        try:
+            client.put_object(
+                Bucket=bucket,
+                Key=probe_key,
+                Body=payload,
+                ContentType='application/json',
+            )
+            created = True
+            fetched = client.get_object(Bucket=bucket, Key=probe_key)['Body'].read()
+            response = client.list_objects_v2(Bucket=bucket, Prefix=args.prefix)
+            keys = [item['Key'] for item in response.get('Contents', [])]
+            print(
+                json.dumps(
+                    {
+                        'bucket': bucket,
+                        'prefix': args.prefix,
+                        'probe_key': probe_key,
+                        'roundtrip_ok': fetched == payload and probe_key in keys,
+                    },
+                    indent=2,
+                )
+            )
+            return 0 if fetched == payload and probe_key in keys else 1
+        finally:
+            if created:
+                client.delete_object(Bucket=bucket, Key=probe_key)
 
     try:
         client.list_objects_v2(Bucket=bucket, Prefix=args.prefix, MaxKeys=1)
