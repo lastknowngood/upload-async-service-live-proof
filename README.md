@@ -28,13 +28,15 @@ auf `coolify-01`.
   - `head-bucket`
   - leerer Prefix-Readback
   - app-naher `put/get/list/delete`-Roundtrip auf einem Testprefix
-- es gibt aktuell noch keinen demo-spezifischen Object-Storage-Key-Readback und
-  keine Host-Ressourcen aus diesem Repo
-- der naechste verbleibende Object-Storage-Schritt ist aktuell ein externer
-  Console-Gate:
-  - Hetzner erzeugt neue S3-Credentials derzeit ueber `Security -> S3 Credentials`
-  - der Secret Key ist nur im Erzeugungsmoment sichtbar und liegt nicht in
-    bestehenden Console- oder API-Readbacks vor
+- ein demo-spezifischer S3-Key wurde einmalig erzeugt, lokal ausserhalb von
+  Git gesichert, gegen den Proof-Bucket verifiziert und danach wieder
+  widerrufen
+- der verifizierte Befund dazu ist:
+  - Hetzner-S3-Credentials in diesem Object-Storage-Projekt sind projektweit
+  - derselbe Demo-Key sah sowohl `schwedler-coolify-app-proof` als auch
+    `schwedler-coolify-bkp`
+- aktuell gibt es deshalb bewusst keinen aktiven App-Object-Storage-Key aus
+  diesem Projekt und keine Host-Ressourcen aus diesem Repo
 - es laeuft aktuell kein privater oder oeffentlicher Dienst aus diesem Repo auf
   `coolify-01`
 - DNS und private/public Host-Evidence fehlen noch
@@ -96,5 +98,6 @@ git status --short --ignored
 - lokaler Code- und Testpfad ist vorhanden
 - oeffentliches GitHub-Repo und Proof-Ref sind vorhanden
 - dedizierter Proof-Bucket plus browserloser Operator-Preflight sind vorhanden
-- demo-spezifischer S3-Key, private Host-Proofs, DNS und Cleanup-Evidence
-  fehlen noch
+- ein demo-spezifischer S3-Key-Pfad ist technisch bekannt, im geteilten
+  `Backups`-Projekt aber aktuell zu breit fuer sicheres App-Wiring
+- private Host-Proofs, DNS und Cleanup-Evidence fehlen noch
