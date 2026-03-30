@@ -30,6 +30,11 @@ auf `coolify-01`.
   - app-naher `put/get/list/delete`-Roundtrip auf einem Testprefix
 - es gibt aktuell noch keinen demo-spezifischen Object-Storage-Key-Readback und
   keine Host-Ressourcen aus diesem Repo
+- der naechste verbleibende Object-Storage-Schritt ist aktuell ein externer
+  Console-Gate:
+  - Hetzner erzeugt neue S3-Credentials derzeit ueber `Security -> S3 Credentials`
+  - der Secret Key ist nur im Erzeugungsmoment sichtbar und liegt nicht in
+    bestehenden Console- oder API-Readbacks vor
 - es laeuft aktuell kein privater oder oeffentlicher Dienst aus diesem Repo auf
   `coolify-01`
 - DNS und private/public Host-Evidence fehlen noch
