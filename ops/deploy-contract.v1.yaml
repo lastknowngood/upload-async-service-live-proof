@@ -25,7 +25,7 @@ coolify:
 
 build:
   source_type: git
-  source_ref: proof/upload-async-service-live-proof-private-20260330-r1
+  source_ref: proof/upload-async-service-live-proof-private-20260330-r2
   runtime_notes: single FastAPI app with embedded DB-polling worker; PostgreSQL is durable source of truth; Hetzner Object Storage stores derived artifacts only.
 
 state:
@@ -56,6 +56,7 @@ notes:
   - PostgreSQL is the durable source of truth for uploads and job state.
   - Object Storage is used only for rematerializable derived JSON artifacts.
   - Proof-only endpoints stay allowed in this private-only block and must be fenced before any later public proof.
-  - Current steady state is a private-only proof contract plus a published proof ref, a dedicated Hetzner Object Storage project retained, and an empty dedicated bucket retained; no host resources, no active app Object Storage credential, no DNS and no live proof evidence are active from this contract.
+  - Current steady state is a private-only proof contract plus published proof refs, a dedicated Hetzner Object Storage project retained, and an empty dedicated bucket retained; no host resources, no active app Object Storage credential, no DNS and no live proof evidence are active from this contract.
   - On this Hetzner Object Storage setup, generated S3 credentials are project-wide per Object Storage project; app-runtime isolation therefore uses a dedicated project instead of the shared `Backups` project.
   - Any later private host round must mint a fresh demo key and prove full isolation with that exact key in the same block before app wiring or live use starts.
+  - The first private host round proved exact import plus partial A/B flow on `r1`, then exposed a real store bug that is fixed in `abff105c4cb0743e9d758a6812d63c8490233a22` and published on `r2`; exact import of `r2` is proven, but Coolify failed before activating the new version, so the round was cleaned up fail-closed.

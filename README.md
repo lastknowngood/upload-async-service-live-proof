@@ -18,8 +18,9 @@ auf `coolify-01`.
 
 - das Repo ist lokal vorhanden und oeffentlich auf GitHub publiziert:
   - `https://github.com/lastknowngood/upload-async-service-live-proof`
-- der aktuelle Proof-Ref ist publiziert:
+- die bisher publizierten Proof-Refs sind:
   - `proof/upload-async-service-live-proof-private-20260330-r1`
+  - `proof/upload-async-service-live-proof-private-20260330-r2`
 - die Runtime, die projektlokalen Proof-Helfer und der Deploy-Contract fuer den
   Upload-/Async-Fall sind angelegt
 - der aktuelle Contract ist bewusst auf einen privaten Proof-Block ausgerichtet:
@@ -39,13 +40,26 @@ auf `coolify-01`.
   - derselbe Key bekam gegen `schwedler-coolify-bkp` nur `AccessDenied`
 - der alte Shared-Proof-Bucket `schwedler-coolify-app-proof` im Projekt
   `Backups` ist entfernt
+- ein erster privater Host-Lauf wurde gestartet und fail-closed wieder
+  entfernt:
+  - `r1` wurde in Coolify exakt importiert
+  - private Readiness sowie Upload `A` und `B` waren browserlos gruen
+  - der Hold-/Worker-Terminierungsfall fuer `C` deckte einen echten
+    Postgres-Store-Defekt auf
+  - der Defekt ist lokal behoben, regression-getestet und als
+    `abff105 fix: tighten private proof helpers` auf `main` und `r2`
+    publiziert
+  - `r2` wurde in Coolify ebenfalls exakt importiert
+  - die neue Version wurde aber weder per Rolling Update noch per bounded cold
+    redeploy aktiv; Coolify brach den Deploy vor Aktivierung wieder ab
 - aktuell gibt es bewusst keinen aktiven App-Object-Storage-Key und keine
   Host-Ressourcen aus diesem Repo
 - es laeuft aktuell kein privater oder oeffentlicher Dienst aus diesem Repo auf
   `coolify-01`
-- DNS und private/public Host-Evidence fehlen noch
+- `upload.dental-school.education` hat aktuell oeffentlich weder `A` noch
+  `AAAA`
 - der generische Host-Dump-/Restore-Pfad fuer diesen Demo-Slug ist im Host-Repo
-  vorbereitet, aber fuer dieses Projekt noch nicht live benutzt
+  vorbereitet, blieb in diesem roten privaten Lauf aber unbenutzt
 
 ## Lokale Entwicklung
 
@@ -111,4 +125,15 @@ git status --short --ignored
 - spaeteres Host-Wiring braucht trotzdem wieder einen **neuen** Demo-Key und
   muss mit genau diesem Key die volle Isolation im selben Block erneut
   beweisen
-- private Host-Proofs, DNS und Cleanup-Evidence fehlen noch
+- ein erster privater Host-Lauf wurde bereits teilweise bewiesen:
+  - private Readiness
+  - Upload Success
+  - `proof_fail_once`
+- der aktuelle offene Blocker ist jetzt enger:
+  - die Folgeversion `r2` wird zwar exakt importiert, aber auf diesem
+    Coolify-Stand vor Aktivierung der neuen Version wieder entfernt
+- aktueller Steady State nach dem roten Lauf:
+  - kein App-Key retained
+  - kein App-/DB-Ressourcensatz retained
+  - kein Dump-Pfad
+  - kein Public-DNS
