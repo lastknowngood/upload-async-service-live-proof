@@ -53,6 +53,7 @@ def main() -> int:
     parser.add_argument('--access-key-id')
     parser.add_argument('--secret-access-key')
     parser.add_argument('--prefix', default='')
+    parser.add_argument('--expect-error-code')
     args = parser.parse_args()
 
     client = build_client(args)
@@ -120,20 +121,22 @@ def main() -> int:
             if created:
                 client.delete_object(Bucket=bucket, Key=probe_key)
 
+    if not args.expect_error_code:
+        raise SystemExit('--expect-error-code is required for verify-auth-fails.')
+
     try:
         client.list_objects_v2(Bucket=bucket, Prefix=args.prefix, MaxKeys=1)
     except ClientError as exc:
-        print(
-            json.dumps(
-                {
-                    'bucket': bucket,
-                    'prefix': args.prefix,
-                    'auth_failed': True,
-                    'error_code': exc.response.get('Error', {}).get('Code'),
-                }
-            )
-        )
-        return 0
+        error_code = exc.response.get('Error', {}).get('Code')
+        payload = {
+            'bucket': bucket,
+            'prefix': args.prefix,
+            'auth_failed': error_code == args.expect_error_code,
+            'expected_error_code': args.expect_error_code,
+            'error_code': error_code,
+        }
+        print(json.dumps(payload))
+        return 0 if error_code == args.expect_error_code else 1
 
     print(
         json.dumps(
@@ -141,6 +144,7 @@ def main() -> int:
                 'bucket': bucket,
                 'prefix': args.prefix,
                 'auth_failed': False,
+                'expected_error_code': args.expect_error_code,
                 'error': 'unexpected_success',
             }
         )

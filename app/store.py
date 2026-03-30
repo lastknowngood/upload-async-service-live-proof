@@ -486,7 +486,7 @@ class PostgresUploadStore(UploadStore):
 
     def find_processing_hold(self) -> UploadRecord | None:
         with self._connect() as conn:
-            with conn.cursor() as cur:
+            with conn.cursor(row_factory=dict_row) as cur:
                 cur.execute(
                     '''
                     SELECT *

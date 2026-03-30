@@ -6,6 +6,8 @@ import json
 import sys
 from pathlib import Path
 
+from botocore.exceptions import ClientError
+
 TOOL_PATH = Path(__file__).resolve().parents[1] / 'tools' / 'proof' / 'object_storage.py'
 
 
@@ -54,6 +56,29 @@ class FakeS3Client:
             self._objects.pop(item['Key'], None)
 
 
+class FakeAuthFailureClient(FakeS3Client):
+    def __init__(self, error_code: str) -> None:
+        super().__init__()
+        self._error_code = error_code
+
+    def list_objects_v2(
+        self,
+        *,
+        Bucket: str,
+        Prefix: str = '',
+        MaxKeys: int | None = None,
+    ) -> dict[str, object]:
+        raise ClientError(
+            {
+                'Error': {
+                    'Code': self._error_code,
+                    'Message': 'denied',
+                }
+            },
+            'ListObjectsV2',
+        )
+
+
 def test_list_buckets_does_not_require_bucket(monkeypatch, capsys) -> None:
     tool = load_tool_module()
     monkeypatch.setattr(tool, 'build_client', lambda args: FakeS3Client())
@@ -98,3 +123,63 @@ def test_roundtrip_prefix_self_cleans(monkeypatch, capsys) -> None:
     assert payload['probe_key'].startswith('proof/run-1/probe-')
     assert payload['roundtrip_ok'] is True
     assert client.list_objects_v2(Bucket='proof-bucket', Prefix='').get('Contents', []) == []
+
+
+def test_verify_auth_fails_requires_matching_error_code(monkeypatch, capsys) -> None:
+    tool = load_tool_module()
+    monkeypatch.setattr(tool, 'build_client', lambda args: FakeAuthFailureClient('AccessDenied'))
+    monkeypatch.setattr(
+        sys,
+        'argv',
+        [
+            'object_storage.py',
+            'verify-auth-fails',
+            '--endpoint',
+            'https://example.invalid',
+            '--bucket',
+            'proof-bucket',
+            '--access-key-id',
+            'key',
+            '--secret-access-key',
+            'secret',
+            '--expect-error-code',
+            'AccessDenied',
+        ],
+    )
+
+    assert tool.main() == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload['auth_failed'] is True
+    assert payload['error_code'] == 'AccessDenied'
+
+
+def test_verify_auth_fails_rejects_unexpected_client_error(monkeypatch, capsys) -> None:
+    tool = load_tool_module()
+    monkeypatch.setattr(
+        tool,
+        'build_client',
+        lambda args: FakeAuthFailureClient('NoSuchBucket'),
+    )
+    monkeypatch.setattr(
+        sys,
+        'argv',
+        [
+            'object_storage.py',
+            'verify-auth-fails',
+            '--endpoint',
+            'https://example.invalid',
+            '--bucket',
+            'proof-bucket',
+            '--access-key-id',
+            'key',
+            '--secret-access-key',
+            'secret',
+            '--expect-error-code',
+            'AccessDenied',
+        ],
+    )
+
+    assert tool.main() == 1
+    payload = json.loads(capsys.readouterr().out)
+    assert payload['auth_failed'] is False
+    assert payload['error_code'] == 'NoSuchBucket'
