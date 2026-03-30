@@ -22,21 +22,22 @@ auf `coolify-01`.
   - `proof/upload-async-service-live-proof-local-planning`
 - die Runtime, die projektlokalen Proof-Helfer und der Deploy-Contract fuer den
   Upload-/Async-Fall sind angelegt
-- der dedizierte Proof-Bucket `schwedler-coolify-app-proof` existiert bereits
-  in `hel1`
-- ein browserloser Operator-Preflight gegen diesen Bucket ist gruen:
-  - `head-bucket`
-  - leerer Prefix-Readback
-  - app-naher `put/get/list/delete`-Roundtrip auf einem Testprefix
-- ein demo-spezifischer S3-Key wurde einmalig erzeugt, lokal ausserhalb von
-  Git gesichert, gegen den Proof-Bucket verifiziert und danach wieder
-  widerrufen
+- ein dediziertes Hetzner-Object-Storage-Projekt
+  `upload-async-service-live-proof` ist angelegt
+- der dedizierte retained Bucket `schwedler-upload-async-proof` existiert in
+  `hel1`
+- ein proof-scoped S3-Key wurde einmalig erzeugt, lokal ausserhalb von Git
+  gesichert, gegen genau dieses dedizierte Projekt verifiziert und danach
+  wieder widerrufen
 - der verifizierte Befund dazu ist:
-  - Hetzner-S3-Credentials in diesem Object-Storage-Projekt sind projektweit
-  - derselbe Demo-Key sah sowohl `schwedler-coolify-app-proof` als auch
-    `schwedler-coolify-bkp`
-- aktuell gibt es deshalb bewusst keinen aktiven App-Object-Storage-Key aus
-  diesem Projekt und keine Host-Ressourcen aus diesem Repo
+  - Hetzner-S3-Credentials sind projektweit pro Object-Storage-Projekt gueltig
+  - mit dem dedizierten Projekt zeigte `list_buckets` nur
+    `schwedler-upload-async-proof`
+  - derselbe Key bekam gegen `schwedler-coolify-bkp` nur `AccessDenied`
+- der alte Shared-Proof-Bucket `schwedler-coolify-app-proof` im Projekt
+  `Backups` ist entfernt
+- aktuell gibt es bewusst keinen aktiven App-Object-Storage-Key und keine
+  Host-Ressourcen aus diesem Repo
 - es laeuft aktuell kein privater oder oeffentlicher Dienst aus diesem Repo auf
   `coolify-01`
 - DNS und private/public Host-Evidence fehlen noch
@@ -97,7 +98,11 @@ git status --short --ignored
 
 - lokaler Code- und Testpfad ist vorhanden
 - oeffentliches GitHub-Repo und Proof-Ref sind vorhanden
-- dedizierter Proof-Bucket plus browserloser Operator-Preflight sind vorhanden
-- ein demo-spezifischer S3-Key-Pfad ist technisch bekannt, im geteilten
-  `Backups`-Projekt aber aktuell zu breit fuer sicheres App-Wiring
+- dedizierte Object-Storage-Boundary ist vorhanden:
+  - Projekt `upload-async-service-live-proof`
+  - Bucket `schwedler-upload-async-proof`
+  - kein aktiver App-Key retained
+- spaeteres Host-Wiring braucht trotzdem wieder einen **neuen** Demo-Key und
+  muss mit genau diesem Key die volle Isolation im selben Block erneut
+  beweisen
 - private Host-Proofs, DNS und Cleanup-Evidence fehlen noch
