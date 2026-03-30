@@ -56,4 +56,4 @@ notes:
   - PostgreSQL is the durable source of truth for uploads and job state.
   - Object Storage is used only for rematerializable derived JSON artifacts.
   - Proof-only endpoints must be fenced before any public proof.
-  - Current steady state is local/private planning only; no host resources, DNS, bucket credentials or live proof evidence are active from this contract.
+  - Current steady state is public repo plus proof ref published and a dedicated proof bucket prepared; no host resources, demo-scoped bucket credential, DNS or live proof evidence are active from this contract.

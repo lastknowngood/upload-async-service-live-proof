@@ -16,15 +16,25 @@ auf `coolify-01`.
 
 ## Aktueller Zustand
 
-- das Repo existiert lokal als neues separates Demo-Repo
+- das Repo ist lokal vorhanden und oeffentlich auf GitHub publiziert:
+  - `https://github.com/lastknowngood/upload-async-service-live-proof`
+- der aktuelle Proof-Ref ist publiziert:
+  - `proof/upload-async-service-live-proof-local-planning`
 - die Runtime, die projektlokalen Proof-Helfer und der Deploy-Contract fuer den
   Upload-/Async-Fall sind angelegt
-- es gibt aktuell keinen GitHub-Remote-Readback, keinen Bucket-Key-Readback und
+- der dedizierte Proof-Bucket `schwedler-coolify-app-proof` existiert bereits
+  in `hel1`
+- ein browserloser Operator-Preflight gegen diesen Bucket ist gruen:
+  - `head-bucket`
+  - leerer Prefix-Readback
+  - app-naher `put/get/list/delete`-Roundtrip auf einem Testprefix
+- es gibt aktuell noch keinen demo-spezifischen Object-Storage-Key-Readback und
   keine Host-Ressourcen aus diesem Repo
 - es laeuft aktuell kein privater oder oeffentlicher Dienst aus diesem Repo auf
   `coolify-01`
-- DNS, Object-Storage-Credentials und der generische Host-Dump-/Restore-Pfad
-  fuer diesen Demo-Slug sind aktuell noch nicht bewiesen
+- DNS und private/public Host-Evidence fehlen noch
+- der generische Host-Dump-/Restore-Pfad fuer diesen Demo-Slug ist im Host-Repo
+  vorbereitet, aber fuer dieses Projekt noch nicht live benutzt
 
 ## Lokale Entwicklung
 
@@ -79,7 +89,7 @@ git status --short --ignored
 ## Proof-Status
 
 - lokaler Code- und Testpfad ist vorhanden
-- private Host-Proofs, Object-Storage-Control-Path, DNS und Cleanup-Evidence
+- oeffentliches GitHub-Repo und Proof-Ref sind vorhanden
+- dedizierter Proof-Bucket plus browserloser Operator-Preflight sind vorhanden
+- demo-spezifischer S3-Key, private Host-Proofs, DNS und Cleanup-Evidence
   fehlen noch
-- dieses Repo ist aktuell nur lokale/private Planungs- und
-  Implementierungsevidence
