@@ -14,7 +14,7 @@ target:
   environment: production
 
 exposure:
-  mode: private
+  mode: public
   domains:
     - upload.dental-school.education
 
@@ -49,15 +49,15 @@ secrets:
 
 operations:
   healthcheck: GET /healthz
-  rollback_hint: private-only fail-closed round; if private readiness, backup/restore, or restore-cutover proof goes red, keep DNS untouched, clean up app and DB resources, remove the object prefix, revoke the fresh S3 credential, and return to the retained empty Object Storage boundary.
+  rollback_hint: same-day fail-closed proof path; if the private round, proof-fence, or public HTTPS redeploy goes red, remove the A record, clean up app and DB resources, delete the object prefix, revoke the fresh S3 credential, and return to the retained empty Object Storage boundary.
   backup_class: stateful-logical-dump
 
 notes:
   - PostgreSQL is the durable source of truth for uploads and job state.
   - Object Storage is used only for rematerializable derived JSON artifacts.
-  - Proof-only endpoints stay allowed in this private-only block and must be fenced before any later public proof.
-  - Current steady state is a private-only proof contract plus published proof refs, a dedicated Hetzner Object Storage project retained, and an empty dedicated bucket retained; no host resources, no active app Object Storage credential, no DNS and no live proof evidence are active from this contract.
+  - Proof-only endpoints stay allowed only in the private phase and must be fenced before any public proof.
+  - Current steady state is: successful private plus short public proof on `proof/upload-async-service-live-proof-private-20260331-r3`, then same-day cleanup; retained are only the dedicated Hetzner Object Storage project and the empty bucket, with no active app key, no host resources and no DNS.
   - On this Hetzner Object Storage setup, generated S3 credentials are project-wide per Object Storage project; app-runtime isolation therefore uses a dedicated project instead of the shared `Backups` project.
   - Any later private host round must mint a fresh demo key and prove full isolation with that exact key in the same block before app wiring or live use starts.
-  - The first private host round proved exact import plus partial A/B flow on `r1`, then exposed a real store bug that is fixed in `abff105c4cb0743e9d758a6812d63c8490233a22` and published on `r2`; exact import of `r2` is proven, but Coolify failed before activating the new version, so the round was cleaned up fail-closed.
-  - The next private retry input is `proof/upload-async-service-live-proof-private-20260331-r3`, intentionally pinned directly to `abff105c4cb0743e9d758a6812d63c8490233a22` as a traceability reset; that pin alone does not claim the Coolify activation failure is solved.
+  - The first private host round proved exact import plus partial A/B flow on `r1`, then exposed a real store bug that is fixed in `abff105c4cb0743e9d758a6812d63c8490233a22`.
+  - The later retry input `proof/upload-async-service-live-proof-private-20260331-r3` is intentionally pinned directly to `abff105c4cb0743e9d758a6812d63c8490233a22` and is the first ref that completed the full private proof, proof-fence and short public proof on this host.

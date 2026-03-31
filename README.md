@@ -21,17 +21,22 @@ auf `coolify-01`.
 - die bisher publizierten Proof-Refs sind:
   - `proof/upload-async-service-live-proof-private-20260330-r1`
   - `proof/upload-async-service-live-proof-private-20260330-r2`
-- der naechste private Retry-Input ist bewusst exakter eingefroren:
   - `proof/upload-async-service-live-proof-private-20260331-r3`
-  - zeigt direkt auf
-    `abff105c4cb0743e9d758a6812d63c8490233a22`
-  - dient nur als Traceability-Reset fuer den naechsten Hostlauf, nicht als
-    behaupteter Kausal-Fix fuer den Coolify-Aktivierungsfehler
+- `r3` zeigt direkt auf
+  `abff105c4cb0743e9d758a6812d63c8490233a22`
 - die Runtime, die projektlokalen Proof-Helfer und der Deploy-Contract fuer den
   Upload-/Async-Fall sind angelegt
-- der aktuelle Contract ist bewusst auf einen privaten Proof-Block ausgerichtet:
-  - `exposure.mode: private`
-  - kein Public-DNS- oder TLS-Claim in diesem Arbeitsstand
+- der erste volle private und kurze oeffentliche Proof auf `r3` ist
+  erfolgreich gelaufen:
+  - exakter Import beim privaten Create und beim same-ref Redeploy
+  - browserloser Hold-/Worker-Terminierungsfall, Retry und Rematerialisierung
+  - Dump, `host-restic-data-backup-run`, Restore in sauberes Ziel,
+    Restore-Cutover und Rematerialisierung aus Restore-Daten
+  - proof-only Oberflaeche vor der public Runde mit `PROOF_MODE=false`
+    geschlossen
+  - kurzer Public-Proof auf `https://upload.dental-school.education`
+    erfolgreich
+  - danach same-day fail-closed Cleanup erfolgreich
 - ein dediziertes Hetzner-Object-Storage-Projekt
   `upload-async-service-live-proof` ist angelegt
 - der dedizierte retained Bucket `schwedler-upload-async-proof` existiert in
@@ -46,26 +51,14 @@ auf `coolify-01`.
   - derselbe Key bekam gegen `schwedler-coolify-bkp` nur `AccessDenied`
 - der alte Shared-Proof-Bucket `schwedler-coolify-app-proof` im Projekt
   `Backups` ist entfernt
-- ein erster privater Host-Lauf wurde gestartet und fail-closed wieder
-  entfernt:
-  - `r1` wurde in Coolify exakt importiert
-  - private Readiness sowie Upload `A` und `B` waren browserlos gruen
-  - der Hold-/Worker-Terminierungsfall fuer `C` deckte einen echten
-    Postgres-Store-Defekt auf
-  - der Defekt ist lokal behoben, regression-getestet und als
-    `abff105 fix: tighten private proof helpers` auf `main` und `r2`
-    publiziert
-  - `r2` wurde in Coolify ebenfalls exakt importiert
-  - die neue Version wurde aber weder per Rolling Update noch per bounded cold
-    redeploy aktiv; Coolify brach den Deploy vor Aktivierung wieder ab
 - aktuell gibt es bewusst keinen aktiven App-Object-Storage-Key und keine
   Host-Ressourcen aus diesem Repo
 - es laeuft aktuell kein privater oder oeffentlicher Dienst aus diesem Repo auf
   `coolify-01`
 - `upload.dental-school.education` hat aktuell oeffentlich weder `A` noch
   `AAAA`
-- der generische Host-Dump-/Restore-Pfad fuer diesen Demo-Slug ist im Host-Repo
-  vorbereitet, blieb in diesem roten privaten Lauf aber unbenutzt
+- der generische Host-Dump-/Restore-Pfad fuer diesen Demo-Slug ist jetzt real
+  genutzt und fail-closed wieder aufgeraeumt
 
 ## Lokale Entwicklung
 
@@ -121,9 +114,10 @@ git status --short --ignored
 
 - lokaler Code- und Testpfad ist vorhanden
 - oeffentliches GitHub-Repo und Proof-Ref sind vorhanden
-- der aktuelle Projekt-Contract ist bewusst auf einen privaten Host-Block
-  eingefroren; ein spaeterer Public-Proof braucht danach einen eigenen
-  Contract-Nachzug
+- der aktuelle Projekt-Contract ist jetzt auf den erfolgreichen `r3`-Proof
+  ausgerichtet:
+  - `exposure.mode: public`
+  - Proof-Hostname `upload.dental-school.education`
 - dedizierte Object-Storage-Boundary ist vorhanden:
   - Projekt `upload-async-service-live-proof`
   - Bucket `schwedler-upload-async-proof`
@@ -131,15 +125,17 @@ git status --short --ignored
 - spaeteres Host-Wiring braucht trotzdem wieder einen **neuen** Demo-Key und
   muss mit genau diesem Key die volle Isolation im selben Block erneut
   beweisen
-- der naechste legitime Schritt ist ein frischer privater Retry auf `r3`
-- ein erster privater Host-Lauf wurde bereits teilweise bewiesen:
+- privater `r3`-Beweis erfolgreich:
   - private Readiness
-  - Upload Success
   - `proof_fail_once`
-- der aktuelle offene Blocker ist jetzt enger:
-  - die Folgeversion `r2` wird zwar exakt importiert, aber auf diesem
-    Coolify-Stand vor Aktivierung der neuen Version wieder entfernt
-- aktueller Steady State nach dem roten Lauf:
+  - `proof_hold` plus `POST /proof/terminate-worker`
+  - Dump, Offsite-Aufnahme, Restore, Restore-Cutover und Rematerialisierung
+- kurzer Public-Proof erfolgreich:
+  - `HTTPS 200`
+  - Upload
+  - Status-/Artefakt-Readback
+  - Anti-Indexing
+- aktueller Steady State nach erfolgreichem Cleanup:
   - kein App-Key retained
   - kein App-/DB-Ressourcensatz retained
   - kein Dump-Pfad
