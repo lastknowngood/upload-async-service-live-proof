@@ -21,6 +21,12 @@ auf `coolify-01`.
 - die bisher publizierten Proof-Refs sind:
   - `proof/upload-async-service-live-proof-private-20260330-r1`
   - `proof/upload-async-service-live-proof-private-20260330-r2`
+- der naechste private Retry-Input ist bewusst exakter eingefroren:
+  - `proof/upload-async-service-live-proof-private-20260331-r3`
+  - zeigt direkt auf
+    `abff105c4cb0743e9d758a6812d63c8490233a22`
+  - dient nur als Traceability-Reset fuer den naechsten Hostlauf, nicht als
+    behaupteter Kausal-Fix fuer den Coolify-Aktivierungsfehler
 - die Runtime, die projektlokalen Proof-Helfer und der Deploy-Contract fuer den
   Upload-/Async-Fall sind angelegt
 - der aktuelle Contract ist bewusst auf einen privaten Proof-Block ausgerichtet:
@@ -125,6 +131,7 @@ git status --short --ignored
 - spaeteres Host-Wiring braucht trotzdem wieder einen **neuen** Demo-Key und
   muss mit genau diesem Key die volle Isolation im selben Block erneut
   beweisen
+- der naechste legitime Schritt ist ein frischer privater Retry auf `r3`
 - ein erster privater Host-Lauf wurde bereits teilweise bewiesen:
   - private Readiness
   - Upload Success

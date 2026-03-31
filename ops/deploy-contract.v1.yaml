@@ -25,7 +25,7 @@ coolify:
 
 build:
   source_type: git
-  source_ref: proof/upload-async-service-live-proof-private-20260330-r2
+  source_ref: proof/upload-async-service-live-proof-private-20260331-r3
   runtime_notes: single FastAPI app with embedded DB-polling worker; PostgreSQL is durable source of truth; Hetzner Object Storage stores derived artifacts only.
 
 state:
@@ -60,3 +60,4 @@ notes:
   - On this Hetzner Object Storage setup, generated S3 credentials are project-wide per Object Storage project; app-runtime isolation therefore uses a dedicated project instead of the shared `Backups` project.
   - Any later private host round must mint a fresh demo key and prove full isolation with that exact key in the same block before app wiring or live use starts.
   - The first private host round proved exact import plus partial A/B flow on `r1`, then exposed a real store bug that is fixed in `abff105c4cb0743e9d758a6812d63c8490233a22` and published on `r2`; exact import of `r2` is proven, but Coolify failed before activating the new version, so the round was cleaned up fail-closed.
+  - The next private retry input is `proof/upload-async-service-live-proof-private-20260331-r3`, intentionally pinned directly to `abff105c4cb0743e9d758a6812d63c8490233a22` as a traceability reset; that pin alone does not claim the Coolify activation failure is solved.
