@@ -3,6 +3,17 @@
 Kleines separates Demo-Repo fuer einen generischen Upload-/Async-/Artefaktpfad
 auf `coolify-01`.
 
+## Kurzstatus
+
+| Feld | Stand |
+|---|---|
+| Contract-Klasse | `lifecycle.mode: live`, historischer stateful Upload-/Async-Proof |
+| Aktuelle Runtime | kein privater oder oeffentlicher Dienst auf `coolify-01` |
+| Aktuelles DNS | kein `A`/`AAAA` fuer `upload.dental-school.education` |
+| Retained Ressourcen | dediziertes Object-Storage-Projekt `upload-async-service-live-proof` plus leerer Bucket `schwedler-upload-async-proof`; kein aktiver App-Key |
+| Proof-/Source-Ref | `proof/upload-async-service-live-proof-private-20260331-r3` auf `abff105c4cb0743e9d758a6812d63c8490233a22`; `main` traegt heute die Doku-Wahrheit |
+| Evidence-Locator | Host-Repo `docs/provisioning-log/2026-03.md`, Eintraege `2026-03-30` bis `2026-03-31` zum Upload-Proof und Object-Storage-Boundary, plus `docs/projects/index.md` |
+
 ## Charakter
 
 - `lifecycle.mode: live`
@@ -18,7 +29,7 @@ auf `coolify-01`.
 
 Klarstellung: `lifecycle.mode: live` beschreibt hier die Proof-/Deploy-Contract-Klasse. Ob aus diesem Repo aktuell ein Dienst, DNS oder Host-Ressourcen retained sind, steht in den folgenden Bulletpoints und in den `notes` des Deploy-Contracts.
 
-- das Repo ist lokal vorhanden und oeffentlich auf GitHub publiziert:
+- das Repo ist als Remote-Repo oeffentlich auf GitHub publiziert:
   - `https://github.com/lastknowngood/upload-async-service-live-proof`
 - die bisher publizierten Proof-Refs sind:
   - `proof/upload-async-service-live-proof-private-20260330-r1`
@@ -26,6 +37,13 @@ Klarstellung: `lifecycle.mode: live` beschreibt hier die Proof-/Deploy-Contract-
   - `proof/upload-async-service-live-proof-private-20260331-r3`
 - `r3` zeigt direkt auf
   `abff105c4cb0743e9d758a6812d63c8490233a22`
+
+| Runde | Ref | Kurzstatus |
+|---|---|---|
+| `r1` | `proof/upload-async-service-live-proof-private-20260330-r1` | privater erster Hostpfad bis in echten App-Failure, danach fail-closed |
+| `r2` | `proof/upload-async-service-live-proof-private-20260330-r2` | Retry blieb an Coolify-Orchestrierung haengen, danach fail-closed |
+| `r3` | `proof/upload-async-service-live-proof-private-20260331-r3` | erfolgreicher privater plus kurzer oeffentlicher Proof, Commit `abff105c4cb0743e9d758a6812d63c8490233a22` |
+
 - die Runtime, die projektlokalen Proof-Helfer und der Deploy-Contract fuer den
   Upload-/Async-Fall sind angelegt
 - der erste volle private und kurze oeffentliche Proof auf `r3` ist
